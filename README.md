@@ -1,5 +1,5 @@
 # helloms
-This repo contains a standalone test application that uses a Direct3D12 mesh shader. It was based off of the spinning cube sample code, see [here](https://github.com/clandrew/spinningcube12).
+This repo contains a standalone test application that uses a Direct3D12 mesh shader. Good to use as a starting point or for verifying basic things. It was based off of the spinning cube sample code, see [here](https://github.com/clandrew/spinningcube12).
 
 ![Example image](https://raw.githubusercontent.com/clandrew/helloms/master/Images/Image.png "Example image.")
 
