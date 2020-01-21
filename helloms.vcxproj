@@ -194,8 +194,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="SpinningCube.cpp" />
-    <ClCompile Include="SpinningCubeMain.cpp" />
+    <ClCompile Include="helloms.cpp" />
+    <ClCompile Include="hellomsMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpinningCube.rc" />
@@ -205,6 +205,9 @@
     <Image Include="SpinningCube.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\MeshShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Content\SamplePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

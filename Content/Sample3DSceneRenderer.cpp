@@ -465,6 +465,11 @@ bool Sample3DSceneRenderer::Render()
 		m_commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 		m_commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
+
+		D3D12_SHADING_RATE_COMBINER combiners[2];
+		combiners[0] = D3D12_SHADING_RATE_COMBINER_OVERRIDE;
+		combiners[1] = D3D12_SHADING_RATE_COMBINER_PASSTHROUGH;
+		m_commandList->RSSetShadingRate(D3D12_SHADING_RATE_1X1, combiners);
 		
 		if (m_vertexProcessingMode == InputAssembler)
 		{

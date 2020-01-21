@@ -20,14 +20,22 @@ float4 TransformPosition(float4 v)
 	return v;
 }
 
+struct MSPrim
+{
+	uint shadingRate : SV_ShadingRate;
+};
+
 [outputtopology("triangle")]
 [numthreads(1, 1, 1)]
 void MSMain(
 	in uint3 groupID : SV_GroupID,
 	in uint3 threadInGroup : SV_GroupThreadID,
 	out vertices MSvert verts[8],
-	out indices uint3 idx[12]) // Three indices per primitive
+	out indices uint3 idx[12],
+	out primitives MSPrim prims[12])
 {
+	uint D3D12_SHADING_RATE_4X4 = 0xA;
+
 	const uint numVertices = 8;
 	const uint numPrimitives = 12;
 	SetMeshOutputCounts(numVertices, numPrimitives);
@@ -55,6 +63,22 @@ void MSMain(
 
 	verts[7].pos = TransformPosition(float4(0.5f, 0.5f, 0.5f, 1.0f));
 	verts[7].color = float3(1.0f, 1.0f, 1.0f);
+
+	MSPrim prim;
+	prim.shadingRate = D3D12_SHADING_RATE_4X4;
+
+	prims[0] = prim;
+	prims[1] = prim;
+	prims[2] = prim;
+	prims[3] = prim;
+	prims[4] = prim;
+	prims[5] = prim;
+	prims[6] = prim;
+	prims[7] = prim;
+	prims[8] = prim;
+	prims[9] = prim;
+	prims[10] = prim;
+	prims[11] = prim;
 	
 	idx[0] = uint3(0, 2, 1);
 	idx[1] = uint3(1, 2, 3);
