@@ -99,4 +99,9 @@
       <Filter>Content</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\MeshShader.hlsl">
+      <Filter>Content</Filter>
+    </None>
+  </ItemGroup>
 </Project>
