@@ -9,4 +9,4 @@ This repo contains a standalone test application that uses a Direct3D12 mesh sha
 
 2 (numerical key) - Mesh shader mode
 
-The current mode is written in the application title bar. If mesh shaders are not supported on the device, it says "Input Assembler only, Mesh Shaders not supported on device" in the title bar.
+The current mode is written in the application title bar. If mesh shaders are not supported on the device, it says "Input Assembler only, Mesh Shaders not supported on device" in the title bar, and the program will use input assembler only.
