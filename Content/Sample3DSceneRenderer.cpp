@@ -54,6 +54,8 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 
 	SetVertexProcessingMode(InputAssembler);
 
+	SetVertexProcessingMode(MeshShader);
+
 	// Create a root signature with a single constant buffer slot.
 	{
 		CD3DX12_DESCRIPTOR_RANGE range;
