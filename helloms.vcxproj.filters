@@ -19,6 +19,9 @@
     <Filter Include="Content">
       <UniqueIdentifier>{19a4f0df-91be-4e67-9469-2f55d526b2e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{3e598cfc-e134-44af-9f1a-2bb94fcf4851}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -92,16 +95,16 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\SamplePixelShader.hlsl">
-      <Filter>Content</Filter>
+    <FxCompile Include="Content\PS.hlsl">
+      <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Content\SampleVertexShader.hlsl">
-      <Filter>Content</Filter>
+    <FxCompile Include="Content\VS.hlsl">
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\MeshShader.hlsl">
-      <Filter>Content</Filter>
+    <None Include="Content\MS.hlsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

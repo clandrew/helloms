@@ -99,7 +99,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MeshShader.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,7 +118,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MeshShader.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MeshShader.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -164,7 +164,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MeshShader.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -205,10 +205,10 @@
     <Image Include="SpinningCube.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\MeshShader.hlsl">
+    <None Include="Content\MS.hlsl">
       <FileType>Document</FileType>
     </None>
-    <FxCompile Include="Content\SamplePixelShader.hlsl">
+    <FxCompile Include="Content\PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -218,7 +218,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Content\SampleVertexShader.hlsl">
+    <FxCompile Include="Content\VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
