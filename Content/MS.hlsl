@@ -12,6 +12,8 @@ struct MSvert
 	float3 color : COLOR0;
 };
 
+StructuredBuffer<MSvert> g_vertices : register(t0);
+
 float4 TransformPosition(float4 v)
 {
 	v = mul(v, model);

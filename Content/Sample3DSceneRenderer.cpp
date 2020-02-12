@@ -58,11 +58,19 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 
 	// Create a root signature with a single constant buffer slot.
 	{
-		CD3DX12_DESCRIPTOR_RANGE range;
-		CD3DX12_ROOT_PARAMETER parameter;
+		CD3DX12_ROOT_PARAMETER parameters[2];
 
-		range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-		parameter.InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_ALL);
+		CD3DX12_DESCRIPTOR_RANGE range0;
+		CD3DX12_DESCRIPTOR_RANGE range1;
+		
+		{
+			range0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+			parameters[0].InitAsDescriptorTable(1, &range0, D3D12_SHADER_VISIBILITY_ALL);
+		}
+		{
+			range1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+			parameters[1].InitAsDescriptorTable(1, &range1, D3D12_SHADER_VISIBILITY_ALL);
+		}
 
 		D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer, if IA is used.
@@ -72,7 +80,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
 		CD3DX12_ROOT_SIGNATURE_DESC descRootSignature;
-		descRootSignature.Init(1, &parameter, 0, nullptr, rootSignatureFlags);
+		descRootSignature.Init(_countof(parameters), parameters, 0, nullptr, rootSignatureFlags);
 
 		ComPtr<ID3DBlob> pSignature;
 		ComPtr<ID3DBlob> pError;
@@ -287,7 +295,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		// Create a descriptor heap for the constant buffers.
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-			heapDesc.NumDescriptors = DX::c_frameCount;
+			heapDesc.NumDescriptors = DX::c_frameCount + 1; // One entry for each frame count, then an entry at the end for VB data.
 			heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 			// This flag indicates that this descriptor heap can be bound to the pipeline and that descriptors contained in it can be referenced by a root table.
 			heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -322,6 +330,29 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			cbvGpuAddress += desc.SizeInBytes;
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 		}
+
+		// Create a constant buffer view for VB/IB data, in case we use mesh shaders.
+		{
+			CD3DX12_RESOURCE_DESC constantBufferDesc2 = CD3DX12_RESOURCE_DESC::Buffer(c_alignedConstantBufferSize2);
+
+			DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
+				&uploadHeapProperties,
+				D3D12_HEAP_FLAG_NONE,
+				&constantBufferDesc2,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&m_constantBuffer2)));
+
+			NAME_D3D12_OBJECT(m_constantBuffer2);
+
+			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress2 = m_constantBuffer->GetGPUVirtualAddress();
+
+			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+			desc.BufferLocation = cbvGpuAddress2;
+			desc.SizeInBytes = c_alignedConstantBufferSize2;
+			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+		}
+
 
 		// Map the constant buffers.
 		CD3DX12_RANGE readRange(0, 0);		// We do not intend to read from this resource on the CPU.
@@ -445,8 +476,16 @@ bool Sample3DSceneRenderer::Render()
 		m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 		// Bind the current frame's constant buffer to the pipeline.
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_deviceResources->GetCurrentFrameIndex(), m_cbvDescriptorSize);
-		m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+		{
+			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_deviceResources->GetCurrentFrameIndex(), m_cbvDescriptorSize);
+			m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+		}
+		
+		if (m_vertexProcessingMode == MeshShader)
+		{
+			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_deviceResources->GetCurrentFrameIndex(), m_cbvDescriptorSize);
+			m_commandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+		}
 
 		// Set the viewport and scissor rectangle.
 		D3D12_VIEWPORT viewport = m_deviceResources->GetScreenViewport();
