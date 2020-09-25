@@ -100,8 +100,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\MeshShader.hlsl">
+    <CustomBuild Include="Content\MeshShader.hlsl">
       <Filter>Content</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>
