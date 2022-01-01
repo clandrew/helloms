@@ -80,8 +80,8 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 	}
 
 	// Load shaders
-	m_vertexShader = DX::ReadData(L"SampleVertexShader.cso");
-	m_pixelShader = DX::ReadData(L"SamplePixelShader.cso");
+	m_vertexShader = DX::ReadData(L"VS.cso");
+	m_pixelShader = DX::ReadData(L"PS.cso");
 
     static const D3D12_INPUT_ELEMENT_DESC inputLayout[] =
     {
