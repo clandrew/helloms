@@ -2,7 +2,7 @@
 
 #include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
-#include "Content\Sample3DSceneRenderer.h"
+#include "Sample3DSceneRenderer.h"
 
 // Renders Direct3D content on the screen.
 namespace SpinningCube

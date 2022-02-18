@@ -99,7 +99,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhMSMain.h MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,7 +118,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhMSMain.h MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhMSMain.h MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -164,7 +164,7 @@
       <AdditionalDependencies>d3d12.lib;dxgi.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhContent\MSMain.h Content\MS.hlsl</Command>
+      <Command>dxc -Od -Qembed_debug -Zi -Tms_6_5 -EMSMain -FhMSMain.h MS.hlsl</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,8 +172,8 @@
     <ClInclude Include="Common\DeviceResources.h" />
     <ClInclude Include="Common\DirectXHelper.h" />
     <ClInclude Include="Common\StepTimer.h" />
-    <ClInclude Include="Content\Sample3DSceneRenderer.h" />
-    <ClInclude Include="Content\ShaderStructures.h" />
+    <ClInclude Include="Sample3DSceneRenderer.h" />
+    <ClInclude Include="ShaderStructures.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
@@ -183,7 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\DeviceResources.cpp" />
-    <ClCompile Include="Content\Sample3DSceneRenderer.cpp" />
+    <ClCompile Include="Sample3DSceneRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -205,10 +205,10 @@
     <Image Include="SpinningCube.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\MS.hlsl">
+    <None Include="MS.hlsl">
       <FileType>Document</FileType>
     </None>
-    <FxCompile Include="Content\PS.hlsl">
+    <FxCompile Include="PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -218,7 +218,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Content\VS.hlsl">
+    <FxCompile Include="VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

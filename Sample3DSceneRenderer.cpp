@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "Sample3DSceneRenderer.h"
 
-#include "..\Common\DirectXHelper.h"
-#include "..\Content\MSMain.h"
+#include "Common\DirectXHelper.h"
+#include "MSMain.h"
 #include <ppltasks.h>
 #include <synchapi.h>
 
@@ -52,7 +52,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		OutputDebugStringW(L"The device does not support mesh shaders.\n");
 	}
 
-	SetVertexProcessingMode(InputAssembler_V1Semantics);
+	SetVertexProcessingMode(InputAssembler_V2Semantics);
 
 	// Create a root signature with a single constant buffer slot.
 	{
@@ -112,6 +112,8 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 	{
 		struct PSO_STREAM
 		{
+			// Input layout
+			CD3DX12_PIPELINE_STATE_STREAM_INPUT_LAYOUT InputLayout;
 			CD3DX12_PIPELINE_STATE_STREAM_ROOT_SIGNATURE pRootSignature;
 			CD3DX12_PIPELINE_STATE_STREAM_VS VS;
 			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
@@ -125,6 +127,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC SampleDesc;
 		} stateStream;
 
+		stateStream.InputLayout = { inputLayout , _countof(inputLayout) };
 		stateStream.pRootSignature = m_rootSignature.Get();
 		stateStream.VS = CD3DX12_SHADER_BYTECODE(&m_vertexShader[0], m_vertexShader.size());
 		stateStream.PS = CD3DX12_SHADER_BYTECODE(&m_pixelShader[0], m_pixelShader.size());
@@ -547,9 +550,13 @@ void Sample3DSceneRenderer::SetVertexProcessingMode(VertexProcessingMode m)
 		return;
 	}
 
-	if (m == InputAssembler_V1Semantics || m == InputAssembler_V2Semantics)
+	if (m == InputAssembler_V1Semantics)
 	{
 		m_deviceResources->SetWindowTitle(L"SpinningCube (Input Assembler)");
+	}
+	else if (m == InputAssembler_V2Semantics)
+	{
+		m_deviceResources->SetWindowTitle(L"SpinningCube (Input Assembler, v2 semantics)");
 	}
 	else if (m == MeshShader)
 	{
