@@ -52,9 +52,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		OutputDebugStringW(L"The device does not support mesh shaders.\n");
 	}
 
-	SetVertexProcessingMode(InputAssembler);
-
-	SetVertexProcessingMode(MeshShader);
+	SetVertexProcessingMode(InputAssembler_V1Semantics);
 
 	// Create a root signature with a single constant buffer slot.
 	{
@@ -109,7 +107,48 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		state.DSVFormat = m_deviceResources->GetDepthBufferFormat();
 		state.SampleDesc.Count = 1;
 
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&m_inputAssemblerPipelineState)));
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&m_inputAssemblerPipelineStateV1)));
+	}
+	{
+		struct PSO_STREAM
+		{
+			CD3DX12_PIPELINE_STATE_STREAM_ROOT_SIGNATURE pRootSignature;
+			CD3DX12_PIPELINE_STATE_STREAM_VS VS;
+			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
+			CD3DX12_PIPELINE_STATE_STREAM_RASTERIZER RasterizerState;
+			CD3DX12_PIPELINE_STATE_STREAM_BLEND_DESC BlendState;
+			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL DepthStencilState;
+			CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_MASK SampleMask;
+			CD3DX12_PIPELINE_STATE_STREAM_PRIMITIVE_TOPOLOGY PrimitiveTopology;
+			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RenderTargetFormats;
+			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DepthStencilFormat;
+			CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC SampleDesc;
+		} stateStream;
+
+		stateStream.pRootSignature = m_rootSignature.Get();
+		stateStream.VS = CD3DX12_SHADER_BYTECODE(&m_vertexShader[0], m_vertexShader.size());
+		stateStream.PS = CD3DX12_SHADER_BYTECODE(&m_pixelShader[0], m_pixelShader.size());
+		stateStream.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		stateStream.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		stateStream.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		stateStream.SampleMask = UINT_MAX;
+		stateStream.PrimitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+		D3D12_RT_FORMAT_ARRAY rtFormatArray{};
+		rtFormatArray.NumRenderTargets = 1;
+		rtFormatArray.RTFormats[0] = m_deviceResources->GetBackBufferFormat();
+		stateStream.RenderTargetFormats = rtFormatArray;
+
+		stateStream.DepthStencilFormat = m_deviceResources->GetDepthBufferFormat();
+
+		DXGI_SAMPLE_DESC sampleDesc{};
+		sampleDesc.Count = 1;
+		stateStream.SampleDesc = sampleDesc;
+
+		D3D12_PIPELINE_STATE_STREAM_DESC StreamDesc;
+		StreamDesc.pPipelineStateSubobjectStream = &stateStream;
+		StreamDesc.SizeInBytes = sizeof(stateStream);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePipelineState(&StreamDesc, IID_PPV_ARGS(&m_inputAssemblerPipelineStateV2)));
 	}
 
 	if (m_supportsMeshShaders)
@@ -164,7 +203,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		auto d3dDevice = m_deviceResources->GetD3DDevice();
 
 		// Create a command list.
-		DX::ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_deviceResources->GetCommandAllocator(), m_inputAssemblerPipelineState.Get(), IID_PPV_ARGS(&m_commandList)));
+		DX::ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_deviceResources->GetCommandAllocator(), m_inputAssemblerPipelineStateV1.Get(), IID_PPV_ARGS(&m_commandList)));
         NAME_D3D12_OBJECT(m_commandList);
 
 		// Cube vertices. Each vertex has a position and a color.
@@ -426,9 +465,13 @@ bool Sample3DSceneRenderer::Render()
 	DX::ThrowIfFailed(m_deviceResources->GetCommandAllocator()->Reset());
 
 	ComPtr<ID3D12PipelineState> pipelineState;
-	if (m_vertexProcessingMode == InputAssembler)
+	if (m_vertexProcessingMode == InputAssembler_V1Semantics)
 	{
-		pipelineState = m_inputAssemblerPipelineState;
+		pipelineState = m_inputAssemblerPipelineStateV1;
+	}
+	else if (m_vertexProcessingMode == InputAssembler_V2Semantics)
+	{
+		pipelineState = m_inputAssemblerPipelineStateV2;
 	}
 	else if (m_vertexProcessingMode == MeshShader)
 	{
@@ -468,7 +511,7 @@ bool Sample3DSceneRenderer::Render()
 
 		m_commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 		
-		if (m_vertexProcessingMode == InputAssembler)
+		if (m_vertexProcessingMode == InputAssembler_V1Semantics || m_vertexProcessingMode == InputAssembler_V2Semantics)
 		{
 			m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
@@ -500,11 +543,11 @@ void Sample3DSceneRenderer::SetVertexProcessingMode(VertexProcessingMode m)
 	if (!m_supportsMeshShaders)
 	{
 		m_deviceResources->SetWindowTitle(L"SpinningCube (Input Assembler only, Mesh Shaders not supported on device)");
-		m_vertexProcessingMode = InputAssembler;
+		m_vertexProcessingMode = InputAssembler_V1Semantics;
 		return;
 	}
 
-	if (m == InputAssembler)
+	if (m == InputAssembler_V1Semantics || m == InputAssembler_V2Semantics)
 	{
 		m_deviceResources->SetWindowTitle(L"SpinningCube (Input Assembler)");
 	}
@@ -519,7 +562,7 @@ void Sample3DSceneRenderer::OnKeyUp(uint32_t keyCode)
 {
 	if (keyCode == 49)
 	{
-		SetVertexProcessingMode(InputAssembler);
+		SetVertexProcessingMode(InputAssembler_V1Semantics);
 	}
 	else if (keyCode == 50)
 	{

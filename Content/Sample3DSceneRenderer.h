@@ -23,7 +23,8 @@ namespace SpinningCube
 
 		enum VertexProcessingMode
 		{
-			InputAssembler,
+			InputAssembler_V1Semantics,
+			InputAssembler_V2Semantics,
 			MeshShader
 		};
 		void SetVertexProcessingMode(VertexProcessingMode m);
@@ -39,7 +40,8 @@ namespace SpinningCube
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6>	m_commandList;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature>			m_rootSignature;
 
-		Microsoft::WRL::ComPtr<ID3D12PipelineState>			m_inputAssemblerPipelineState;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState>			m_inputAssemblerPipelineStateV1;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState>			m_inputAssemblerPipelineStateV2;
         Microsoft::WRL::ComPtr<ID3D12PipelineState>         m_meshShaderPipelineState;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>		m_cbvHeap;
